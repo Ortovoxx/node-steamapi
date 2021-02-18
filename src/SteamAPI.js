@@ -152,7 +152,7 @@ class SteamAPI {
 	 * @param {string} [region=us] Store region
 	 * @returns {Promise<Object>} App details for ID
 	 */
-	getGameDetails(app, force = false, region = 'us') {
+	async getGameDetails(app, force = false, region = 'us') {
 		if (!reApp.test(app)) return Promise.reject(TypeError('Invalid/no app provided'));
 		if (!reRegion.test(region)) return Promise.reject(TypeError('Invalid region provided'));
 
@@ -164,11 +164,11 @@ class SteamAPI {
 			);
 		const key = `${app}-${region.toLowerCase()}`;
 
-		if (!force && this.options.enabled && this.cache.has(key) && this.cache.get(key)[0] > Date.now())
-			return Promise.resolve(this.cache.get(key)[1]);
+		if (!force && this.options.enabled && await this.cache.has(key) && await this.cache.get(key)[0] > Date.now())
+			return Promise.resolve(await this.cache.get(key)[1]);
 
-		if (this.options.enabled && (!this.cache.has(key) || this.cache.get(key)[0] <= Date.now()))
-			return request().then(json => this.cache.set(key, [Date.now() + this.options.expires, json]) && json);
+		if (this.options.enabled && (!await this.cache.has(key) || await this.cache.get(key)[0] <= Date.now()))
+			return request().then(json => await this.cache.set(key, [Date.now() + this.options.expires, json]) && json);
 
 		return request();
 	}
