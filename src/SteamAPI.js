@@ -22,6 +22,8 @@ const reProfileID = RegExp(String.raw`${reProfileBase}(?:id\/)?([a-z0-9_-]{2,32}
 
 const STATUS_SUCCESS = 1;
 
+const Keyv = require('keyv');
+
 class SteamAPI {
 	/**
 	 * Sets Steam key for future use.
