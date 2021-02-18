@@ -30,17 +30,19 @@ class SteamAPI {
 	 * @param {string} key Steam key
 	 * @param {Object} [options={}] Optional options for caching and warnings `getGameDetails()`
 	 * @param {boolean} [options.enabled=true] Whether caching is enabled
+	 * @param {boolean} [options.storage=false] Whether to add an external storage adapter for caching
 	 * @param {number} [options.expires=86400000] How long cache should last for in ms (1 day by default)
 	 * @param {boolean} [options.disableWarnings=false] Whether to suppress warnings
 	 */
-	constructor(key, { enabled = true, expires = 86400000, disableWarnings = false } = {}) {
+	constructor(key, { enabled = true, storage = false, expires = 86400000, disableWarnings = false } = {}) {
 		this.key = key;
 		this.baseAPI = 'https://api.steampowered.com';
 		this.baseStore = 'https://store.steampowered.com/api';
 		this.headers = { 'User-Agent': `SteamAPI/${version} (https://www.npmjs.com/package/${name})` };
 		this.options = { enabled, expires, disableWarnings };
 		this.resolveCache = new Map();
-		if (enabled) this.cache = new Map();
+		if (enabled && !storage) this.cache = new Map();
+		if (enabled && storage) this.cache = new Keyv(storage);
 		if (!key) this._warn('no key provided, some methods won\'t work, go get one from https://goo.gl/DfNy5s');
 	}
 
